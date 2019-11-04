@@ -24,9 +24,7 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 	}
 }
 
-// Status, SetHeader, String, Json, HTML, Data, Query, PostForm
-
-//Status ...
+//Status set response status
 func (c *Context) Status(statusCode int) {
 	c.StatusCode = statusCode
 	c.Writer.WriteHeader(statusCode)

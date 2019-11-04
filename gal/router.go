@@ -5,10 +5,12 @@ type Router struct {
 	headlers map[string]HandleFunc
 }
 
+// newRouter generate new router
 func newRouter() *Router {
 	return &Router{headlers: make(map[string]HandleFunc)}
 }
 
+// addRoute add func for url
 func (router *Router) addRoute(method, pattern string, hanler HandleFunc) {
 	key := method + "-" + pattern
 	router.headlers[key] = hanler

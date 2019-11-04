@@ -29,11 +29,14 @@ func (server *Server) POST(pattern string, handler HandleFunc) {
 
 // Run ...
 func (server *Server) Run(addr string) error {
+
+	//*Server implements ServeHTTP method
 	return http.ListenAndServe(addr, server)
 }
 
-// ServerHTTP ...
+// ServerHTTP is the entrance
 func (server *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	//generate new context once the request entries
 	c := newContext(w, req)
 	server.router.handle(c)
 }
