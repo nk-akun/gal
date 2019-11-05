@@ -3,14 +3,14 @@ package gal
 import "strings"
 
 // Router ...
-type Router struct {
+type router struct {
 	roots    map[string]*node
 	headlers map[string]HandleFunc
 }
 
 // newRouter generate new router
-func newRouter() *Router {
-	return &Router{
+func newRouter() *router {
+	return &router{
 		roots:    make(map[string]*node),
 		headlers: make(map[string]HandleFunc),
 	}
@@ -32,7 +32,7 @@ func parsePattern(pattern string) (parts []string) {
 }
 
 // getRoute get the real pattern of path and the parameters if path
-func (router *Router) getRoute(method string, path string) (n *node, params map[string]string) {
+func (router *router) getRoute(method string, path string) (n *node, params map[string]string) {
 	root, ok := router.roots[method]
 	if !ok {
 		return nil, nil
@@ -58,7 +58,7 @@ func (router *Router) getRoute(method string, path string) (n *node, params map[
 }
 
 // addRoute add func for url
-func (router *Router) addRoute(method, pattern string, hanler HandleFunc) {
+func (router *router) addRoute(method, pattern string, hanler HandleFunc) {
 	key := method + "-" + pattern
 	router.headlers[key] = hanler
 
@@ -71,7 +71,7 @@ func (router *Router) addRoute(method, pattern string, hanler HandleFunc) {
 	root.insert(pattern, parts, 0)
 }
 
-func (router *Router) handle(c *Context) {
+func (router *router) handle(c *Context) {
 	n, params := router.getRoute(c.Method, c.Path)
 
 	if n != nil {

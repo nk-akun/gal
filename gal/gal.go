@@ -7,9 +7,18 @@ import (
 // HandleFunc the func to headle
 type HandleFunc func(c *Context)
 
+// RouterGroup ...
+type RouterGroup struct {
+	prefix      string
+	middlewares []HandleFunc
+	parent      *RouterGroup
+	server      *Server
+}
+
 // Server engine of gal
 type Server struct {
-	router *Router
+	*RouterGroup
+	router *router
 }
 
 // New generate a new server
