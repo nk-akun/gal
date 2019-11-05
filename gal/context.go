@@ -8,8 +8,10 @@ import (
 
 // Context ...
 type Context struct {
-	Writer     http.ResponseWriter
-	Req        *http.Request
+	Writer http.ResponseWriter
+	Req    *http.Request
+
+	// Params store the parameters in path such as "/:name"
 	Params     map[string]string
 	Method     string
 	Path       string

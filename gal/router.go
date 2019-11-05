@@ -16,6 +16,7 @@ func newRouter() *Router {
 	}
 }
 
+// parsePattern split pattern using "/"
 func parsePattern(pattern string) (parts []string) {
 	originParts := strings.Split(pattern, "/")
 	parts = make([]string, 0)
@@ -30,6 +31,7 @@ func parsePattern(pattern string) (parts []string) {
 	return parts
 }
 
+// getRoute get the real pattern of path and the parameters if path
 func (router *Router) getRoute(method string, path string) (n *node, params map[string]string) {
 	root, ok := router.roots[method]
 	if !ok {

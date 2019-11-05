@@ -6,9 +6,12 @@ type node struct {
 	pattern  string
 	self     string
 	children []*node
-	isWild   bool
+
+	// /:name or /*file
+	isWild bool
 }
 
+// matchChild find a childNode of the compound condition
 func (n *node) matchChild(part string) *node {
 	for _, child := range n.children {
 		if part == child.self || child.isWild == true {
@@ -18,6 +21,7 @@ func (n *node) matchChild(part string) *node {
 	return nil
 }
 
+// matchChildren find all childNode of the compound condition
 func (n *node) matchChildren(part string) (children []*node) {
 	children = make([]*node, 0)
 	for _, child := range n.children {
