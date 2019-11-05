@@ -7,7 +7,7 @@ import (
 	"github.com/nk-akun/gal/gal"
 )
 
-func main() {
+func testV1() {
 	r := gal.New()
 	r.GET("/", func(c *gal.Context) {
 		obj := map[string]interface{}{
@@ -25,4 +25,35 @@ func main() {
 
 	err := r.Run("127.0.0.1:8080")
 	fmt.Println(err)
+}
+
+func testV2() {
+	r := gal.New()
+	r.GET("/", func(c *gal.Context) {
+		obj := map[string]interface{}{
+			"name": "marathon",
+			"age":  21,
+		}
+		c.JSON(200, obj)
+	})
+
+	r.GET("/hello", func(c *gal.Context) {
+		c.HTML(200, "<h1>HELLO<h1>")
+	})
+
+	r.GET("/hello/:name", func(c *gal.Context) {
+		c.String(200, "How are you,%s?", c.Param("name"))
+	})
+
+	r.GET("assets/*file", func(c *gal.Context) {
+		c.JSON(200, map[string]string{"filepath": c.Param("file")})
+	})
+
+	err := r.Run("127.0.0.1:8080")
+	fmt.Println(err)
+}
+
+func main() {
+	// testV1()
+	testV2()
 }

@@ -10,6 +10,7 @@ import (
 type Context struct {
 	Writer     http.ResponseWriter
 	Req        *http.Request
+	Params     map[string]string
 	Method     string
 	Path       string
 	StatusCode int
@@ -33,6 +34,11 @@ func (c *Context) Status(statusCode int) {
 //SetHeader ...
 func (c *Context) SetHeader(key, value string) {
 	c.Writer.Header().Add(key, value)
+}
+
+// Param get the para from context like /get/:name
+func (c *Context) Param(key string) string {
+	return c.Params[key]
 }
 
 // Query ...
