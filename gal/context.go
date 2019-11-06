@@ -43,14 +43,14 @@ func (c *Context) Param(key string) string {
 	return c.Params[key]
 }
 
-// Query ...
-func (c *Context) Query(key string) {
-	c.Req.URL.Query().Get(key)
-}
-
 //PostForm ...
 func (c *Context) PostForm(key string) {
 	c.Req.FormValue(key)
+}
+
+// Query ...
+func (c *Context) Query(key string) string {
+	return c.Req.URL.Query().Get(key)
 }
 
 // String ...

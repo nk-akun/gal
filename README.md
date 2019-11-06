@@ -9,4 +9,6 @@
 * 实现了前缀树路由,支持类似 /:name或/*file形式
     * GET、POST等方法分别维护一棵树,然后做把path按照"/"进行split，再做trie树.
 * Router中增加roots来存储路由前缀树的根
+* 支持分组路由，构建GroupRouter,并将server封装进GroupRouter，同时把GroupRouter封装进server，这样互相封装使之二者的方法能够相互使用.
+在设计上，Server是最上级结构，GroupRouter是其一部分，
 * 具体实现见代码注释，使用demo见main中testV2

@@ -49,6 +49,16 @@ func testV2() {
 		c.JSON(200, map[string]string{"filepath": c.Param("file")})
 	})
 
+	v2 := r.Group("/v2")
+	{
+		v2.GET("/hello/:name", func(c *gal.Context) {
+			c.String(200, "How are you,%s? v2", c.Param("name"))
+		})
+		v2.GET("/assets/*file", func(c *gal.Context) {
+			c.JSON(200, map[string]string{"filepath": c.Param("file")})
+		})
+	}
+
 	err := r.Run("127.0.0.1:8080")
 	fmt.Println(err)
 }
