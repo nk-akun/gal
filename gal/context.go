@@ -16,14 +16,20 @@ type Context struct {
 	Method     string
 	Path       string
 	StatusCode int
+
+	middlewareIndex int
+
+	// middleware functions
+	handlers []HandleFunc
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
 	return &Context{
-		Writer: w,
-		Req:    req,
-		Method: req.Method,
-		Path:   req.URL.Path,
+		Writer:          w,
+		Req:             req,
+		Method:          req.Method,
+		Path:            req.URL.Path,
+		middlewareIndex: -1,
 	}
 }
 
@@ -51,6 +57,17 @@ func (c *Context) PostForm(key string) {
 // Query ...
 func (c *Context) Query(key string) string {
 	return c.Req.URL.Query().Get(key)
+}
+
+// Next is the func from one middleware function to another
+func (c *Context) Next() {
+	for {
+		c.middlewareIndex++
+		if c.middlewareIndex >= len(c.handlers) {
+			break
+		}
+		c.handlers[c.middlewareIndex](c)
+	}
 }
 
 // String ...

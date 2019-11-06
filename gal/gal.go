@@ -2,6 +2,7 @@ package gal
 
 import (
 	"net/http"
+	"strings"
 )
 
 // HandleFunc the func to headle
@@ -30,7 +31,7 @@ type Server struct {
 func New() *Server {
 	server := &Server{router: newRouter()}
 	server.RouterGroup = &RouterGroup{server: server}
-	server.groups = []*RouterGroup{}
+	server.groups = []*RouterGroup{server.RouterGroup}
 	return server
 }
 
@@ -79,9 +80,25 @@ func (server *Server) Run(addr string) error {
 	return http.ListenAndServe(addr, server)
 }
 
+// Use is the function to add a new middleware for a group
+func (group *RouterGroup) Use(handler HandleFunc) {
+	group.middlewares = append(group.middlewares, handler)
+}
+
 // ServerHTTP is the entrance
 func (server *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	//generate new context once the request entries
+
+	middlewares := []HandleFunc{}
+
+	// get all middleware functions which match the req's URL
+	for _, group := range server.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
+
 	c := newContext(w, req)
+	c.handlers = middlewares
 	server.router.handle(c)
 }

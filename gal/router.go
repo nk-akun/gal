@@ -77,8 +77,9 @@ func (router *router) handle(c *Context) {
 	if n != nil {
 		c.Params = params
 		key := c.Method + "-" + n.pattern
-		router.headlers[key](c)
+		c.handlers = append(c.handlers, router.headlers[key])
 	} else {
 		c.Data(404, []byte("404 not found!"))
 	}
+	c.Next()
 }
