@@ -22,7 +22,7 @@ func testV1() {
 
 	r.GET("/hello", func(c *gal.Context) {
 		// c.String(200, "hello,your method is %s,your path is %s", c.Method, c.Path)
-		c.HTML(200, "<h1>HELLO<h1>")
+		c.HTML(200, "", "<h1>HELLO<h1>")
 	})
 
 	err := r.Run("127.0.0.1:8080")
@@ -40,7 +40,7 @@ func testV2() {
 	})
 
 	r.GET("/hello", func(c *gal.Context) {
-		c.HTML(200, "<h1>HELLO<h1>")
+		c.HTML(200, "", "<h1>HELLO<h1>")
 	})
 
 	r.GET("/hello/:name", func(c *gal.Context) {
