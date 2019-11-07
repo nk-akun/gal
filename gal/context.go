@@ -21,6 +21,8 @@ type Context struct {
 
 	// middleware functions
 	handlers []HandleFunc
+
+	server *Server
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -94,8 +96,10 @@ func (c *Context) Data(statusCode int, data []byte) {
 }
 
 // HTML ...
-func (c *Context) HTML(statusCode int, html string) {
+func (c *Context) HTML(statusCode int, name string, data interface{}) {
 	c.Status(statusCode)
 	c.SetHeader("Content-Type", "text/html")
-	c.Writer.Write([]byte(html))
+	if err := c.server.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
+		http.Error(c.Writer, err.Error(), 500)
+	}
 }

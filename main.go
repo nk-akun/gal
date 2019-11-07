@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"time"
 
 	"github.com/nk-akun/gal/gal"
@@ -108,6 +109,12 @@ func testV3() {
 		})
 	}
 
+	r.SetFuncMap(template.FuncMap{
+		"formatAsDate": func() {},
+	})
+	r.LoadHTMLGlob("templates/*")
+	r.Static("/assets", "./static")
+
 	err := r.Run("127.0.0.1:8080")
 	fmt.Println(err)
 }
@@ -115,5 +122,5 @@ func testV3() {
 func main() {
 	// testV1()
 	// testV2()
-	testV3()
+	// testV3()
 }

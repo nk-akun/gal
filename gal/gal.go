@@ -1,7 +1,9 @@
 package gal
 
 import (
+	"html/template"
 	"net/http"
+	"path"
 	"strings"
 )
 
@@ -23,8 +25,10 @@ type RouterGroup struct {
 // Server is engine of gal
 type Server struct {
 	*RouterGroup
-	router *router
-	groups []*RouterGroup
+	router        *router
+	groups        []*RouterGroup
+	htmlTemplates *template.Template
+	funcMap       template.FuncMap
 }
 
 // New generate a new server
@@ -85,6 +89,40 @@ func (group *RouterGroup) Use(handler HandleFunc) {
 	group.middlewares = append(group.middlewares, handler)
 }
 
+// SetFuncMap ...
+func (server *Server) SetFuncMap(funcMap template.FuncMap) {
+	server.funcMap = funcMap
+}
+
+// LoadHTMLGlob ...
+func (server *Server) LoadHTMLGlob(pattern string) {
+	server.htmlTemplates = template.Must(template.New("").Funcs(server.funcMap).ParseGlob(pattern))
+}
+
+// create static handler
+func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandleFunc {
+	absolutePath := path.Join(group.prefix, relativePath)
+	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+	return func(c *Context) {
+		file := c.Param("filepath")
+		// Check if file exists and/or if we have permission to access it
+		if _, err := fs.Open(file); err != nil {
+			c.Status(http.StatusNotFound)
+			return
+		}
+
+		fileServer.ServeHTTP(c.Writer, c.Req)
+	}
+}
+
+// Static serve static files
+func (group *RouterGroup) Static(relativePath string, root string) {
+	handler := group.createStaticHandler(relativePath, http.Dir(root))
+	urlPattern := path.Join(relativePath, "/*filepath")
+	// Register GET handlers
+	group.GET(urlPattern, handler)
+}
+
 // ServerHTTP is the entrance
 func (server *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	//generate new context once the request entries
@@ -100,5 +138,6 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	c := newContext(w, req)
 	c.handlers = middlewares
+	c.server = server
 	server.router.handle(c)
 }

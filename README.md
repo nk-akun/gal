@@ -16,3 +16,4 @@
 ### V3要点:
 * 实现了基于分组的中间件应用，可以指定任意一个group创建中间件函数
 * 实现的基本思想是将中间件函数存于group，然后根据用户请求URL前缀匹配择出对应中间件函数，并存于Context的handlers中，并且把URL对应的处理函数加入进Context的handlers的最后，这样只需要把handlers中的function依次执行就可以了
+* 支持了静态资源服务和HTML模板渲染
